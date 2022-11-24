@@ -1620,9 +1620,9 @@ if __name__ == '__main__':
 
                 if threads > 5600:
                     logger.warning("Thread is higher than 5600")
-                if rpc > 5600:
+                if rpc > 9000:
                     logger.warning(
-                        "RPC (Request Pre Connection) is higher than 5600")
+                        "RPC (Request Pre Connection) is higher than 9000")
 
                 proxies = handleProxyList(con, proxy_li, proxy_ty, url)
                 for thread_id in range(threads):
